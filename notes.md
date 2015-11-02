@@ -1,10 +1,10 @@
 www.community.hortonworks.com
 
-Pheonix: High Concurrency. You can run large number of user submitting queries with low latency. Easy to use compared to Hbase UI.
+Phoenix: High Concurrency. You can run large number of user submitting queries with low latency. Easy to use compared to Hbase UI.
 
 Hive drawbacks: Cannot have many concurrent users. It may be okay for tens of user but not hundreds of concurrent users.
 SparkSQL also has high concurrency (many users) issues.
-Pheonix has limitations on deep sql analytics.
+Phoenix has limitations on deep sql analytics.
 
 Hive is tested with 100 concurrent users and not able to go beyond 100 users. SparkSQL assign memory for each user request so it cannot go beyond the in-memory capacity.
 
@@ -29,7 +29,7 @@ HDP is in process to remove hive metadata server (mySQL) and keep metadata in Hb
 Hive File formats: Row Oriented: Sequence Files and Avro
 Column Oriented file formats: Parquet and ORC Files
 
-Interpretability and split-ability
+Interopretability and split-ability
 
 All these file formats can be used by Pig and Spark.
 
@@ -44,5 +44,37 @@ Sqoop will NOT be used Knox. Knox is made for user interface. But data load is n
 Add your SerDe jars to HDFS and attach to Hive
 
 UDFs are per Database
+
+hive.server2.enable.doAs = false
+
+Stinger initiate - Vector Query engine
+
+We can have multiple Hive Server 2 instances - one for ETL, one for Business users, etc...
+
+Calcite (Open-sourced framework) - for Cost-Based Optimization (CBO)
+
+If you check "Explain" of Hive query and you see "Plan not optimized by CBO due to missing statistics. Please check log for more details.", you would consider running "COMPUTE STATISTICS for COLUMNS" and "COMPUTE STATISTICS" for those tables.
+
+Example:
+Hive SQL:
+```SQL
+SELECT e.first_name, e.last_name, e.hire_date, d.dept_name, x.from_date, x.to_date
+FROM departments d, employees e, dept_emp x
+WHERE d.dept_no = x.dept_no and e.emp_no = x.emp_no
+ORDER BY d.dept_name, e.last_name, e.first_name, x.from_date;
+```
+
+### Calculate Statistics
+```SQL
+ANALYZE TABLE departments COMPUTE STATISTICS for COLUMNS;
+ANALYZE TABLE dept_emp COMPUTE STATISTICS for COLUMNS;
+ANALYZE TABLE employees COMPUTE STATISTICS for COLUMNS;
+
+ANALYZE TABLE departments COMPUTE STATISTICS;
+ANALYZE TABLE dept_emp COMPUTE STATISTICS;
+ANALYZE TABLE employees COMPUTE STATISTICS;
+```
+
+
 
 
