@@ -44,3 +44,5 @@ Sqoop will NOT be used Knox. Knox is made for user interface. But data load is n
 Add your SerDe jars to HDFS and attach to Hive
 
 UDFs are per Database
+
+
